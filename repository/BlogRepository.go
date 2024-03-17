@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type BlogReository struct {
+type BlogRepository struct {
 	DatabaseConnection *gorm.DB
 }
 
@@ -18,7 +18,7 @@ func CheckDBConnection(db *gorm.DB) error {
 	return nil
 }
 
-func (repo *BlogReository) Get(id string) (model.Blog, error) {
+func (repo *BlogRepository) Get(id string) (model.Blog, error) {
 	blog := model.Blog{}
 	dbResult := repo.DatabaseConnection.First(&blog, "id = ?", id)
 
@@ -29,16 +29,7 @@ func (repo *BlogReository) Get(id string) (model.Blog, error) {
 	return blog, nil
 }
 
-func (repo *BlogReository) Save(blog *model.Blog) error {
-	dbResult := repo.DatabaseConnection.Create(blog)
-	if dbResult.Error != nil {
-		return dbResult.Error
-	}
-
-	return nil
-}
-
-func (repo *BlogReository) GetAll() ([]model.Blog, error) {
+func (repo *BlogRepository) GetAll() ([]model.Blog, error) {
 	var blogs []model.Blog
 	dbResult := repo.DatabaseConnection.Find(&blogs)
 	if dbResult.Error != nil {
@@ -47,7 +38,16 @@ func (repo *BlogReository) GetAll() ([]model.Blog, error) {
 	return blogs, nil
 }
 
-func (repo *BlogReository) Update(blog *model.Blog) error {
+func (repo *BlogRepository) Save(blog *model.Blog) error {
+	dbResult := repo.DatabaseConnection.Create(blog)
+	if dbResult.Error != nil {
+		return dbResult.Error
+	}
+
+	return nil
+}
+
+func (repo *BlogRepository) Update(blog *model.Blog) error {
 	dbResult := repo.DatabaseConnection.Save(blog)
 	if dbResult.Error != nil {
 		return dbResult.Error
@@ -55,7 +55,7 @@ func (repo *BlogReository) Update(blog *model.Blog) error {
 	return nil
 }
 
-func (repo *BlogReository) Delete(id string) error {
+func (repo *BlogRepository) Delete(id string) error {
 	dbResult := repo.DatabaseConnection.Delete(&model.Blog{}, id)
 	if dbResult.Error != nil {
 		return dbResult.Error

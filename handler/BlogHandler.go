@@ -2,6 +2,6 @@ package handler
 
 import "blog-service/service"
 
-type BlogHandelr struct {
+type BlogHandler struct {
 	BlogService *service.BlogService
 }

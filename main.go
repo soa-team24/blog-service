@@ -1,6 +1,8 @@
 package main
 
 import (
+	"blog-service/model"
+
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -12,6 +14,8 @@ func initDB() *gorm.DB {
 		print(err)
 		return nil
 	}
+
+	database.AutoMigrate(&model.Blog{})
 
 	return database
 }

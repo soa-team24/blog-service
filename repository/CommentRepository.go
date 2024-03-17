@@ -21,11 +21,11 @@ func (repo *CommentRepository) Get(id string) (model.Comment, error) {
 	return comment, nil
 }
 
-func (repo *CommentRepository) GetAll() ([]model.Comment, error) {
+func (repo *CommentRepository) GetAllByBlogId(blogID string) ([]model.Comment, error) {
 	var comments []model.Comment
-	dbResult := repo.DatabaseConnection.Find(&comments)
-	if dbResult.Error != nil {
-		return nil, dbResult.Error
+	result := repo.DatabaseConnection.Find(&comments, "blog_id = ?", blogID)
+	if result.Error != nil {
+		return nil, result.Error
 	}
 	return comments, nil
 }

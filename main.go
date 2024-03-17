@@ -29,8 +29,21 @@ func initDB() *gorm.DB {
 func startServer(blogHandler *handler.BlogHandler, commentHandler *handler.CommentHandler, voteHandler *handler.VoteHandler) {
 	router := mux.NewRouter().StrictSlash(true)
 
-	//router.HandleFunc("/students/{id}", handler.Get).Methods("GET")
-	//router.HandleFunc("/students", handler.Create).Methods("POST")
+	router.HandleFunc("/blog/{id}", blogHandler.Get).Methods("GET")
+	router.HandleFunc("/blog", blogHandler.GetAll).Methods("GET")
+	router.HandleFunc("/blog", blogHandler.Create).Methods("POST")
+	router.HandleFunc("/blog/{id}", blogHandler.Update).Methods("PUT")
+	router.HandleFunc("/blog/{id}", blogHandler.Delete).Methods("DELETE")
+
+	router.HandleFunc("/comment/{id}", commentHandler.Get).Methods("GET")
+	router.HandleFunc("/comment", commentHandler.Create).Methods("POST")
+	router.HandleFunc("/comment/{id}", commentHandler.Update).Methods("PUT")
+	router.HandleFunc("/comment/{id}", commentHandler.Delete).Methods("DELETE")
+	router.HandleFunc("/blog/{id}/comments", commentHandler.GetAllByBlogId).Methods("GET")
+
+	//router.HandleFunc("/blog/{id}/votes", voteHandler.GetSum).Methods("GET")
+	//router.HandleFunc("/blog/{id}/vote", voteHandler.Create).Methods("POST")
+	//router.HandleFunc("/blog/{id}/vote/{id}", voteHandler.Update).Methods("POST")
 
 	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static")))
 	println("Server starting")

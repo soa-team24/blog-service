@@ -15,7 +15,7 @@ func initDB() *gorm.DB {
 		return nil
 	}
 
-	database.AutoMigrate(&model.Blog{})
+	database.AutoMigrate(&model.Blog{}, &model.Comment{}, &model.Vote{})
 
 	return database
 }

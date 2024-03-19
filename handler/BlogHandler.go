@@ -1,11 +1,13 @@
 package handler
 
 import (
-	"blog-service/model"
-	"blog-service/service"
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
+
+	"blog-service/model"
+	"blog-service/service"
 
 	"github.com/gorilla/mux"
 )
@@ -29,8 +31,10 @@ func (handler *BlogHandler) Get(writer http.ResponseWriter, req *http.Request) {
 
 func (handler *BlogHandler) Create(writer http.ResponseWriter, req *http.Request) {
 	var blog model.Blog
+
 	err := json.NewDecoder(req.Body).Decode(&blog)
 	if err != nil {
+		println("Error while parsing json:", err.Error())
 		println("Error while parsing json")
 		writer.WriteHeader(http.StatusBadRequest)
 		return
@@ -82,6 +86,63 @@ func (handler *BlogHandler) Delete(writer http.ResponseWriter, req *http.Request
 
 func (handler *BlogHandler) GetAll(writer http.ResponseWriter, req *http.Request) {
 	blogs, err := handler.BlogService.GetAll()
+	if err != nil {
+		log.Println("Error while retrieving blogs:", err)
+		writer.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	pagedResult := model.PagedResultBlog{
+		Results:    blogs,
+		TotalCount: len(blogs),
+	}
+
+	writer.Header().Set("Content-Type", "application/json")
+	writer.WriteHeader(http.StatusOK)
+	json.NewEncoder(writer).Encode(pagedResult)
+}
+
+func (handler *BlogHandler) GetAllPaged(writer http.ResponseWriter, req *http.Request) {
+	queryParams := req.URL.Query()
+	pageStr := queryParams.Get("page")
+	pageSizeStr := queryParams.Get("pageSize")
+
+	page, err := strconv.Atoi(pageStr)
+	if err != nil {
+		log.Println("Error parsing page parameter:", err)
+		writer.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	pageSize, err := strconv.Atoi(pageSizeStr)
+	if err != nil {
+		log.Println("Error parsing pageSize parameter:", err)
+		writer.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	blogs, err := handler.BlogService.GetAllPaged(page, pageSize)
+	if err != nil {
+		log.Println("Error while retrieving blogs:", err)
+		writer.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	writer.Header().Set("Content-Type", "application/json")
+	writer.WriteHeader(http.StatusOK)
+	json.NewEncoder(writer).Encode(blogs)
+}
+
+func (handler *BlogHandler) GetByAuthorId(writer http.ResponseWriter, req *http.Request) {
+	idStr := mux.Vars(req)["id"]
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		log.Println("Error while converting ID to int:", err)
+		writer.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	log.Printf("Get blogs by user id: %d", id)
+	blogs, err := handler.BlogService.GetByAuthorId(id)
 	if err != nil {
 		log.Println("Error while retrieving blogs:", err)
 		writer.WriteHeader(http.StatusInternalServerError)

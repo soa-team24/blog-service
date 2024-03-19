@@ -62,14 +62,9 @@ func (service *BlogService) Update(blog *model.Blog) error {
 }
 
 func (service *BlogService) Delete(id string) error {
-	_, err := service.BlogRepo.Get(id)
+	err := service.BlogRepo.Delete(id)
 	if err != nil {
-		return fmt.Errorf("failed to find blog with ID %s: %v", id, err)
-	}
-
-	err = service.BlogRepo.Delete(id)
-	if err != nil {
-		return fmt.Errorf("failed to delete blog: %v", err)
+		return fmt.Errorf("failed to delete blog with ID %s: %v", id, err)
 	}
 	return nil
 }

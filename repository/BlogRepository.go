@@ -73,7 +73,7 @@ func (repo *BlogRepository) Update(blog *model.Blog) error {
 }
 
 func (repo *BlogRepository) Delete(id string) error {
-	dbResult := repo.DatabaseConnection.Delete(&model.Blog{}, id)
+	dbResult := repo.DatabaseConnection.Delete(&model.Blog{}, "id = ?", id)
 	if dbResult.Error != nil {
 		return dbResult.Error
 	}

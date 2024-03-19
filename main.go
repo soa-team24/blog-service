@@ -8,6 +8,8 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gorilla/handlers"
+
 	"github.com/gorilla/mux"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -39,17 +41,30 @@ func startServer(blogHandler *handler.BlogHandler, commentHandler *handler.Comme
 	router.HandleFunc("/comment", commentHandler.Create).Methods("POST")
 	router.HandleFunc("/comment/{id}", commentHandler.Update).Methods("PUT")
 	router.HandleFunc("/comment/{id}", commentHandler.Delete).Methods("DELETE")
-	router.HandleFunc("/blog/{id}/comments", commentHandler.GetAllByBlogId).Methods("GET")
+	router.HandleFunc("/comment/byBlog/{blogId}", commentHandler.GetAllByBlogId).Methods("GET")
 
 	//router.HandleFunc("/blog/{id}/votes", voteHandler.GetSum).Methods("GET")
 	//router.HandleFunc("/blog/{id}/vote", voteHandler.Create).Methods("POST")
 	//router.HandleFunc("/blog/{id}/vote/{id}", voteHandler.Update).Methods("POST")
 
+	allowedOrigins := handlers.AllowedOrigins([]string{"*"}) // Allow all origins
+	allowedMethods := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"})
+	allowedHeaders := handlers.AllowedHeaders([]string{
+		"Content-Type",
+		"Authorization",
+		"X-Custom-Header",
+	})
 	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static")))
+
+	// Apply CORS middleware to all routes
+	corsRouter := handlers.CORS(allowedOrigins, allowedMethods, allowedHeaders)(router)
+
 	println("Server starting")
-	log.Fatal(http.ListenAndServe(":8080", router))
+	log.Fatal(http.ListenAndServe(":8080", corsRouter))
+
 }
 
+// .net na port: 44333
 func main() {
 	database := initDB()
 	if database == nil {

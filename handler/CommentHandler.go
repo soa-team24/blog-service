@@ -81,7 +81,7 @@ func (handler *CommentHandler) Delete(writer http.ResponseWriter, req *http.Requ
 }
 
 func (handler *CommentHandler) GetAllByBlogId(writer http.ResponseWriter, req *http.Request) {
-	id := mux.Vars(req)["id"]
+	id := mux.Vars(req)["blogId"]
 	log.Printf("Get comments by blog id: %s", id)
 	comments, err := handler.CommentService.GetAllByBlogId(id)
 	if err != nil {

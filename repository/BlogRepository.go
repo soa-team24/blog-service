@@ -37,6 +37,23 @@ func (repo *BlogRepository) GetAll() ([]model.Blog, error) {
 	}
 	return blogs, nil
 }
+func (repo *BlogRepository) GetPaged(page, pageSize int) (model.PagedResultBlog, error) {
+	var blogs []model.Blog
+	var totalCount int64
+
+	err := repo.DatabaseConnection.Model(&model.Blog{}).
+		Limit(pageSize).
+		Offset((page - 1) * pageSize).
+		Find(&blogs).Error
+	if err != nil {
+		return model.PagedResultBlog{}, err
+	}
+
+	return model.PagedResultBlog{
+		Results:    blogs,
+		TotalCount: int(totalCount),
+	}, nil
+}
 
 func (repo *BlogRepository) Save(blog *model.Blog) error {
 	dbResult := repo.DatabaseConnection.Create(blog)
@@ -56,9 +73,18 @@ func (repo *BlogRepository) Update(blog *model.Blog) error {
 }
 
 func (repo *BlogRepository) Delete(id string) error {
-	dbResult := repo.DatabaseConnection.Delete(&model.Blog{}, id)
+	dbResult := repo.DatabaseConnection.Delete(&model.Blog{}, "id = ?", id)
 	if dbResult.Error != nil {
 		return dbResult.Error
 	}
 	return nil
+}
+
+func (repo *BlogRepository) GetByAuthorId(userId int) ([]model.Blog, error) {
+	var blogs []model.Blog
+	result := repo.DatabaseConnection.Find(&blogs, "user_id = ?", userId)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return blogs, nil
 }

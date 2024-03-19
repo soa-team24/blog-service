@@ -26,6 +26,14 @@ func (service *BlogService) GetAll() ([]model.Blog, error) {
 	return blogs, nil
 }
 
+func (service *BlogService) GetAllPaged(page int, pageSize int) (model.PagedResultBlog, error) {
+	blogs, err := service.BlogRepo.GetPaged(page, pageSize)
+	if err != nil {
+		return model.PagedResultBlog{}, fmt.Errorf("failed to retrieve blogs: %v", err)
+	}
+	return blogs, nil
+}
+
 func (service *BlogService) Save(blog *model.Blog) error {
 	err := service.BlogRepo.Save(blog)
 	if err != nil {
@@ -54,14 +62,17 @@ func (service *BlogService) Update(blog *model.Blog) error {
 }
 
 func (service *BlogService) Delete(id string) error {
-	_, err := service.BlogRepo.Get(id)
+	err := service.BlogRepo.Delete(id)
 	if err != nil {
-		return fmt.Errorf("failed to find blog with ID %s: %v", id, err)
-	}
-
-	err = service.BlogRepo.Delete(id)
-	if err != nil {
-		return fmt.Errorf("failed to delete blog: %v", err)
+		return fmt.Errorf("failed to delete blog with ID %s: %v", id, err)
 	}
 	return nil
+}
+
+func (service *BlogService) GetByAuthorId(userId int) ([]model.Blog, error) {
+	blogs, err := service.BlogRepo.GetByAuthorId(userId)
+	if err != nil {
+		return nil, fmt.Errorf("failed to retrieve blogs for user with ID %d: %v", userId, err)
+	}
+	return blogs, nil
 }

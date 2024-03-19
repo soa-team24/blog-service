@@ -55,17 +55,8 @@ func startServer(blogHandler *handler.BlogHandler, commentHandler *handler.Comme
 		"Authorization",
 		"X-Custom-Header",
 	})
-	allowedOrigins := handlers.AllowedOrigins([]string{"*"}) // Allow all origins
-	allowedMethods := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"})
-	allowedHeaders := handlers.AllowedHeaders([]string{
-		"Content-Type",
-		"Authorization",
-		"X-Custom-Header",
-	})
-	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static")))
 
-	// Apply CORS middleware to all routes
-	corsRouter := handlers.CORS(allowedOrigins, allowedMethods, allowedHeaders)(router)
+	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static")))
 
 	// Apply CORS middleware to all routes
 	corsRouter := handlers.CORS(allowedOrigins, allowedMethods, allowedHeaders)(router)

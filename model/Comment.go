@@ -11,7 +11,7 @@ type Comment struct {
 	ID               uuid.UUID `json:"id"`
 	UserID           uint32    `json:"userId"`
 	Username         string    `json:"username"`
-	BlogId           uint32    `json:"blogId"`
+	BlogId           uuid.UUID `json:"blogId"`
 	Text             string    `json:"text"`
 	CreationTime     time.Time `json:"creationTime"`
 	LastModification time.Time `json:"lastModification"`

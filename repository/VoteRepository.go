@@ -37,3 +37,12 @@ func (repo *VoteRepository) Update(vote *model.Vote) error {
 	}
 	return nil
 }
+
+func (repo *VoteRepository) GetAllByBlogId(blogID string) ([]model.Vote, error) {
+	var votes []model.Vote
+	result := repo.DatabaseConnection.Find(&votes, "blog_id = ?", blogID)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return votes, nil
+}

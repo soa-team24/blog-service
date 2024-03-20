@@ -26,3 +26,21 @@ func (service *VoteService) GetAllByBlogId(blogID string) (int, error) {
 
 	return totalVotes, nil
 }
+
+func (service *VoteService) GetTotalByBlogId(blogID string) (int, error) {
+	votes, err := service.VoteRepo.GetAllByBlogId(blogID)
+	if err != nil {
+		return 0, fmt.Errorf("failed to retrieve votes for blog ID %s: %v", blogID, err)
+	}
+
+	totalVotes := 0
+	for _, vote := range votes {
+		if vote.IsUpvote {
+			totalVotes++
+		} else {
+			totalVotes--
+		}
+	}
+
+	return totalVotes, nil
+}

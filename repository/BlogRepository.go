@@ -88,3 +88,13 @@ func (repo *BlogRepository) GetByAuthorId(userId int) ([]model.Blog, error) {
 	}
 	return blogs, nil
 }
+
+func (repo *BlogRepository) GetByStatus(status model.Status) ([]model.Blog, error) {
+	var blogs []model.Blog
+	result := repo.DatabaseConnection.Find(&blogs, "status = ?", status)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return blogs, nil
+}

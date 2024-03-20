@@ -37,6 +37,7 @@ func startServer(blogHandler *handler.BlogHandler, commentHandler *handler.Comme
 	router.HandleFunc("/blog", blogHandler.Create).Methods("POST")
 	router.HandleFunc("/blog/{id}", blogHandler.Update).Methods("PUT")
 	router.HandleFunc("/blog/{id}", blogHandler.Delete).Methods("DELETE")
+	router.HandleFunc("/blog/byStatus/{status}", blogHandler.GetByStatus).Methods("GET")
 
 	router.HandleFunc("/comment/{id}", commentHandler.Get).Methods("GET")
 	router.HandleFunc("/comment", commentHandler.Create).Methods("POST")

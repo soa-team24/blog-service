@@ -43,9 +43,10 @@ func startServer(blogHandler *handler.BlogHandler, commentHandler *handler.Comme
 	router.HandleFunc("/comment/{id}", commentHandler.Delete).Methods("DELETE")
 	router.HandleFunc("/blog/{id}/comments", commentHandler.GetAllByBlogId).Methods("GET")
 
-	router.HandleFunc("/blog/{id}/votes", voteHandler.GetAllByBlogId).Methods("GET")
-	//router.HandleFunc("/blog/{id}/vote", voteHandler.Create).Methods("POST")
-	//router.HandleFunc("/blog/{id}/vote/{id}", voteHandler.Update).Methods("POST")
+	router.HandleFunc("/blog/votes/{id}", voteHandler.GetTotalByBlogId).Methods("GET")
+	router.HandleFunc("/blog/allVotes/{id}", voteHandler.GetAllByBlogId).Methods("GET")
+	router.HandleFunc("/blog/votes/{id}", voteHandler.Create).Methods("POST")
+	router.HandleFunc("/blog/votes/{id}", voteHandler.Update).Methods("PUT")
 
 	allowedOrigins := handlers.AllowedOrigins([]string{"*"}) // Allow all origins
 	allowedMethods := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"})

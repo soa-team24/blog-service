@@ -76,3 +76,11 @@ func (service *BlogService) GetByAuthorId(userId int) ([]model.Blog, error) {
 	}
 	return blogs, nil
 }
+
+func (service *BlogService) GetByStatus(status model.Status) ([]model.Blog, error) {
+	blogs, err := service.BlogRepo.GetByStatus(status)
+	if err != nil {
+		return nil, fmt.Errorf("failed to retrieve blogs with status %v: %v", status, err)
+	}
+	return blogs, nil
+}

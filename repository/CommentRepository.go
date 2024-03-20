@@ -48,7 +48,7 @@ func (repo *CommentRepository) Update(comment *model.Comment) error {
 }
 
 func (repo *CommentRepository) Delete(id string) error {
-	dbResult := repo.DatabaseConnection.Delete(&model.Comment{}, id)
+	dbResult := repo.DatabaseConnection.Delete(&model.Comment{}, "id = ?", id)
 	if dbResult.Error != nil {
 		return dbResult.Error
 	}

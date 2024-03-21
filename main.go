@@ -82,7 +82,11 @@ func main() {
 
 	blogService := &service.BlogService{BlogRepo: blogRepo}
 	commentService := &service.CommentService{CommentRepo: commentRepo}
-	voteService := &service.VoteService{VoteRepo: voteRepo}
+	voteService := &service.VoteService{
+		VoteRepo:       voteRepo,
+		CommentService: commentService,
+		BlogService:    blogService,
+	}
 
 	blogHandler := &handler.BlogHandler{BlogService: blogService}
 	commentHandler := &handler.CommentHandler{CommentService: commentService}

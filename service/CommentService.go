@@ -4,6 +4,7 @@ import (
 	"blog-service/model"
 	"blog-service/repository"
 	"fmt"
+	"log"
 	"time"
 )
 
@@ -25,6 +26,18 @@ func (service *CommentService) GetAllByBlogId(blogID string) ([]model.Comment, e
 		return nil, fmt.Errorf("failed to retrieve comments for blog with ID %s: %v", blogID, err)
 	}
 	return comments, nil
+}
+
+func (service *CommentService) GetTotalByBlogID(blogID string) (int, error) {
+
+	comments, err := service.GetAllByBlogId(blogID)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	numComments := len(comments)
+
+	return numComments, nil
 }
 
 func (service *CommentService) Save(comment *model.Comment) error {

@@ -58,6 +58,7 @@ func (service *BlogService) Update(blog *model.Blog) error {
 	if err != nil {
 		return fmt.Errorf("failed to update blog: %v", err)
 	}
+	fmt.Println("Blog is updated")
 	return nil
 }
 

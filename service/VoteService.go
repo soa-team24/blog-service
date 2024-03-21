@@ -7,7 +7,9 @@ import (
 )
 
 type VoteService struct {
-	VoteRepo *repository.VoteRepository
+	VoteRepo       *repository.VoteRepository
+	CommentService *CommentService
+	BlogService    *BlogService
 }
 
 /*func (service *VoteService) GetTotalByBlogId(blogID string) (int, error) {
@@ -28,7 +30,6 @@ type VoteService struct {
 	return totalVotes, nil
 }*/
 
-
 func (service *VoteService) GetTotalByBlogId(blogID string) (int, error) {
 	votes, err := service.VoteRepo.GetAllByBlogId(blogID)
 	if err != nil {
@@ -46,11 +47,41 @@ func (service *VoteService) GetTotalByBlogId(blogID string) (int, error) {
 
 	return totalVotes, nil
 }
+
+func CheckBlogStatus(service *VoteService, blogID string) {
+	totalVotes, err := service.GetTotalByBlogId(blogID)
+	if err != nil {
+		fmt.Printf("Failed to get total votes for blog ID %s: %v\n", blogID, err)
+		return
+	}
+
+	blog, err := service.BlogService.Get(blogID)
+	if err != nil {
+		fmt.Printf("Failed to get blog: %v\n", err)
+		return
+	}
+
+	if totalVotes <= -10 {
+		blog.Status = 2
+	} else if totalVotes >= 1 {
+		blog.Status = 3
+	} else if totalVotes > 3 {
+		blog.Status = 4
+	}
+
+	err = service.BlogService.Update(blog)
+	if err != nil {
+		fmt.Printf("Failed to update blog: %v\n", err)
+	}
+}
+
 func (service *VoteService) Save(vote *model.Vote) error {
 	err := service.VoteRepo.Save(vote)
 	if err != nil {
 		return err
 	}
+	CheckBlogStatus(service, vote.BlogId.String())
+
 	return nil
 }
 
@@ -67,6 +98,8 @@ func (service *VoteService) Update(vote *model.Vote) error {
 	if err != nil {
 		return fmt.Errorf("failed to update vote: %v", err)
 	}
+	CheckBlogStatus(service, vote.BlogId.String())
+
 	return nil
 }
 

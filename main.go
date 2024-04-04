@@ -16,7 +16,8 @@ import (
 )
 
 func initDB() *gorm.DB {
-	connectionStr := "root:super@tcp(localhost:3306)/soa?charset=utf8mb4&parseTime=True&loc=Local"
+	//connectionStr := "root:super@tcp(localhost:3306)/soa?charset=utf8mb4&parseTime=True&loc=Local"
+	connectionStr := "root:root@tcp(blog_db:3306)/soa?charset=utf8mb4&parseTime=True&loc=Local"
 	database, err := gorm.Open(mysql.Open(connectionStr), &gorm.Config{})
 	if err != nil {
 		print(err)
